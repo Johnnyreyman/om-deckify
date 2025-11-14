@@ -64,9 +64,18 @@ echo -e "${YELLOW}Updating system...${NC}"
 sudo dnf clean all
 sudo dnf update -y || { echo -e "${RED}Failed to update system. Check your internet or repositories.${NC}"; exit 1; }
 
-# Install core packages
-echo -e "${YELLOW}Installing packages...${NC}"
-sudo dnf install -y --skip-unavailable steam sddm jq gamescope mangohud wget bluez bluetoothctl wayland plasma-wayland-protocols xwayland || { echo -e "${RED}Failed to install required packages. Ensure repositories are configured correctly.${NC}"; exit 1; }
+# Install core packages (OM Wiki: task-plasma6-wayland + Steam Deck essentials)
+echo -e "${YELLOW}Installing packages (using OM Wiki Wayland task + Steam Deck tools)...${NC}"
+sudo dnf install -y --refresh \
+    task-plasma6-wayland \
+    steam \
+    gamescope \
+    mangohud \
+    wget \
+    bluez \
+    bluetoothctl \
+    jq \
+    || { echo -e "${RED}Failed to install required packages. Ensure repositories are enabled (incl. non-free for NVIDIA).${NC}"; exit 1; }
 
 # Enable services
 sudo systemctl enable sddm bluetooth
@@ -241,7 +250,7 @@ chmod +x ~/Desktop/return-to-gaming-mode.desktop
 tee ~/om-deckify/system_update.sh > /dev/null << 'EOF'
 #!/bin/bash
 echo "Updating OpenMandriva..."
-sudo dnf update -y
+sudo dnf clean all;dnf clean all;sudo dnf distro-sync --refresh -y
 echo "Update complete. Reboot recommended."
 EOF
 chmod +x ~/om-deckify/system_update.sh
